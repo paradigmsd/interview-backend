@@ -49,10 +49,11 @@ export const buildApp = async () => {
     app.setErrorHandler((error, request, reply) => {
         const err = error as any;
         if (err.validation) {
+             const validationContext = err.validationContext ? `${err.validationContext} failed validation` : 'Validation error';
              return reply.status(400).send({
                  error: {
                      code: 'VALIDATION_ERROR',
-                     message: "Request body failed validation",
+                     message: validationContext,
                      details: err.validation
                  }
              });

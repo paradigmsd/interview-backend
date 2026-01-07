@@ -1,4 +1,4 @@
-import { FeatureFlag, Environment, FlagMetadata } from './types.js';
+import type { FeatureFlag, Environment, FlagMetadata, CreateFlagRequest, UpdateFlagRequest } from '@repo/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class FeatureFlagStore {

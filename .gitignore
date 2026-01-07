@@ -3,8 +3,12 @@ node_modules
 .pnpm-store
 
 # Production
-dist
-build
+**/dist
+**/build
+**/.next
+
+# Turborepo
+.turbo
 
 # Environment variables
 .env

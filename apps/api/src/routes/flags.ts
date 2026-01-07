@@ -1,12 +1,12 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { FeatureFlagStore } from '../store.js';
-import { 
-  CreateFlagRequestSchema, 
-  UpdateFlagRequestSchema, 
+import {
+  CreateFlagRequestSchema,
+  UpdateFlagRequestSchema,
   GetFlagsQuerySchema,
   FeatureFlagSchema,
-} from '../types.js';
+} from '@repo/types';
 import { z } from 'zod';
 
 const store = new FeatureFlagStore();
