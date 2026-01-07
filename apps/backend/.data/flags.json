@@ -1,0 +1,291 @@
+[
+  {
+    "id": "e8e64272-26b6-5439-92a6-8acc56eeba11",
+    "key": "dark-mode",
+    "name": "Dark Mode TEST",
+    "description": "Enable dark mode theme across the application",
+    "enabled": false,
+    "environment": "production",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "ui",
+        "theme"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:58:53.878Z"
+  },
+  {
+    "id": "dda02b1f-156e-570f-8878-131d3a3c6570",
+    "key": "dark-mode",
+    "name": "Dark Mode (Staging)",
+    "description": null,
+    "enabled": false,
+    "environment": "staging",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "ui",
+        "theme"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:49:10.330Z"
+  },
+  {
+    "id": "2fbf5425-4542-5736-a747-d4d10a866018",
+    "key": "new-checkout-flow",
+    "name": "New Checkout Flow",
+    "description": null,
+    "enabled": true,
+    "environment": "staging",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "payments",
+        "experiment"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:49:13.593Z"
+  },
+  {
+    "id": "7c71c481-2d99-55e7-91f2-ccc086e7ae0f",
+    "key": "new-checkout-flow",
+    "name": "New Checkout Flow",
+    "description": null,
+    "enabled": true,
+    "environment": "development",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "payments",
+        "experiment"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "c6a2bbbc-40b8-5618-9491-f23b6f385fe2",
+    "key": "ai-recommendations",
+    "name": "AI Recommendations",
+    "description": null,
+    "enabled": true,
+    "environment": "development",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "ml",
+        "experiment"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "3eb0a758-7dc1-5e07-a24b-3744f4de1421",
+    "key": "beta-dashboard",
+    "name": "Beta Dashboard",
+    "description": null,
+    "enabled": false,
+    "environment": "staging",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "ui",
+        "beta"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "3eaa8c4d-f48a-5ba1-87dc-8f66033b0290",
+    "key": "maintenance-mode",
+    "name": "Maintenance Mode",
+    "description": null,
+    "enabled": false,
+    "environment": "production",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "ops",
+        "critical"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "96a13578-c72b-5e35-897b-b7a6265772ba",
+    "key": "feature-analytics",
+    "name": "Feature Analytics",
+    "description": null,
+    "enabled": true,
+    "environment": "production",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "analytics"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "2baee710-70b3-5cf7-b68f-b75efc9c1edb",
+    "key": "social-login",
+    "name": "Social Login",
+    "description": null,
+    "enabled": true,
+    "environment": "development",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "auth"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "72ffccd5-7cba-5a01-b79f-c09b2db9db45",
+    "key": "export-csv",
+    "name": "CSV Export",
+    "description": null,
+    "enabled": true,
+    "environment": "production",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "data",
+        "utility"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "4a5d0748-a285-5851-83d3-8ebc896e47a7",
+    "key": "bulk-operations",
+    "name": "Bulk Operations",
+    "description": null,
+    "enabled": true,
+    "environment": "staging",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "admin",
+        "utility"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "id": "ded8eb15-682e-50ac-9ae0-fec80c1b3297",
+    "key": "notification-center",
+    "name": "Notification Center",
+    "description": null,
+    "enabled": false,
+    "environment": "development",
+    "metadata": {
+      "owner": "system",
+      "tags": [
+        "ui",
+        "notifications"
+      ],
+      "expiresAt": null
+    },
+    "createdAt": "2026-01-07T20:26:47.575Z",
+    "updatedAt": "2026-01-07T20:26:47.575Z"
+  },
+  {
+    "key": "persist-1767817620",
+    "name": "Persist Test",
+    "enabled": true,
+    "environment": "development",
+    "description": null,
+    "metadata": {
+      "owner": "unassigned",
+      "tags": [],
+      "expiresAt": null
+    },
+    "id": "dc1119f2-519e-41c0-bc5e-423d91b70d4a",
+    "createdAt": "2026-01-07T20:27:00.639Z",
+    "updatedAt": "2026-01-07T20:27:00.697Z"
+  },
+  {
+    "key": "nn-456",
+    "name": "nn",
+    "description": "nnn",
+    "enabled": true,
+    "environment": "development",
+    "metadata": {
+      "owner": "unassigned",
+      "tags": [],
+      "expiresAt": null
+    },
+    "id": "acb1e9b6-c725-4ce7-a236-d13658c1153c",
+    "createdAt": "2026-01-07T20:29:55.480Z",
+    "updatedAt": "2026-01-07T20:48:40.592Z"
+  },
+  {
+    "key": "nnn",
+    "name": "nnnn",
+    "description": "nnnn",
+    "enabled": false,
+    "environment": "development",
+    "metadata": {
+      "owner": "unassigned",
+      "tags": [],
+      "expiresAt": null
+    },
+    "id": "214e0921-ead3-4831-b1b1-8f05b22563a5",
+    "createdAt": "2026-01-07T20:36:55.214Z",
+    "updatedAt": "2026-01-07T20:48:18.720Z"
+  },
+  {
+    "key": "nnnn",
+    "name": "nnnnDDDD",
+    "description": "nnnnAAA",
+    "enabled": false,
+    "environment": "development",
+    "metadata": {
+      "owner": "unassigned",
+      "tags": [],
+      "expiresAt": null
+    },
+    "id": "ac9130ac-81ee-4f17-ac35-a33029c5f936",
+    "createdAt": "2026-01-07T20:37:45.428Z",
+    "updatedAt": "2026-01-07T20:48:36.784Z"
+  },
+  {
+    "key": "thomas",
+    "name": "thomas",
+    "description": "thomas",
+    "enabled": true,
+    "environment": "development",
+    "metadata": {
+      "owner": "thomas",
+      "tags": [],
+      "expiresAt": null
+    },
+    "id": "c594983f-6764-4227-8a00-d777e184f9d5",
+    "createdAt": "2026-01-07T20:48:57.915Z",
+    "updatedAt": "2026-01-07T20:49:04.971Z"
+  }
+]

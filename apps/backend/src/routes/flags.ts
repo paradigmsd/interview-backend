@@ -1,5 +1,5 @@
-import { FastifyInstance } from 'fastify';
-import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { FeatureFlagStore } from '../store.js';
 import { 
   CreateFlagRequestSchema, 
@@ -30,7 +30,7 @@ export async function flagsRoutes(app: FastifyInstance) {
         }),
       },
     },
-  }, async (request, reply) => {
+  }, async (request, _reply) => {
     const flags = store.getAll(request.query);
     
     // Calculate metadata
@@ -101,8 +101,8 @@ export async function flagsRoutes(app: FastifyInstance) {
           }
       });
       return reply.code(201).send({ data: newFlag });
-    } catch (e: any) {
-      if (e.message === 'DUPLICATE_KEY') {
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message === 'DUPLICATE_KEY') {
         return reply.code(409).send({
           error: { code: 'DUPLICATE_KEY', message: 'Flag key already exists' }
         });
@@ -133,8 +133,8 @@ export async function flagsRoutes(app: FastifyInstance) {
         });
       }
       return { data: updatedFlag };
-    } catch (e: any) {
-      if (e.message === 'DUPLICATE_KEY') {
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message === 'DUPLICATE_KEY') {
         return reply.code(409).send({
           error: { code: 'DUPLICATE_KEY', message: 'Flag key already exists' }
         });
@@ -188,9 +188,14 @@ export async function flagsRoutes(app: FastifyInstance) {
 
     const previousState = flag.enabled;
     const updatedFlag = store.update(flag.id, { enabled: !previousState });
+    if (!updatedFlag) {
+      return reply.code(404).send({
+        error: { code: 'NOT_FOUND', message: 'Resource not found' }
+      });
+    }
 
     return { 
-        data: updatedFlag!,
+        data: updatedFlag,
         previousState
     };
   });

@@ -1,6 +1,7 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
-import { serializerCompiler, validatorCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod';
+import { serializerCompiler, validatorCompiler, jsonSchemaTransform } from 'fastify-type-provider-zod';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import apiReference from '@scalar/fastify-api-reference';
 import { flagsRoutes } from './routes/flags.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,6 +11,18 @@ export const buildApp = async () => {
         logger: true,
         genReqId: () => uuidv4(), // Custom Request ID
     }).withTypeProvider<ZodTypeProvider>();
+
+    // Be tolerant of clients sending `Content-Type: application/json` with an empty body.
+    // Fastify otherwise throws FST_ERR_CTP_EMPTY_JSON_BODY before hitting route handlers.
+    app.addContentTypeParser('application/json', { parseAs: 'string' }, (_req, body, done) => {
+        try {
+            const str = (body ?? '').toString().trim();
+            if (!str) return done(null, undefined);
+            return done(null, JSON.parse(str));
+        } catch (err) {
+            return done(err as Error);
+        }
+    });
 
     // Input Validation Setup
     app.setValidatorCompiler(validatorCompiler);
@@ -46,8 +59,8 @@ export const buildApp = async () => {
     await app.register(flagsRoutes);
 
     // Global Error Handler for Validation Errors
-    app.setErrorHandler((error, request, reply) => {
-        const err = error as any;
+    app.setErrorHandler((error, _request, reply) => {
+        const err = error as { validation?: unknown };
         if (err.validation) {
              return reply.status(400).send({
                  error: {

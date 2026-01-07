@@ -1,11 +1,47 @@
-import { FeatureFlag, Environment, FlagMetadata } from './types.js';
-import { v4 as uuidv4 } from 'uuid';
+import type { FeatureFlag, Environment, FlagMetadata } from './types.js';
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Stable namespace for generating deterministic IDs for seeded flags.
+// This reduces confusion during dev/watch restarts (seeded flags keep the same IDs).
+const SEED_NAMESPACE = uuidv5('interview-backend-seed-namespace', uuidv5.URL);
+
+const DATA_DIR = path.join(process.cwd(), '.data');
+const DATA_FILE = path.join(DATA_DIR, 'flags.json');
 
 export class FeatureFlagStore {
   private flags: Map<string, FeatureFlag> = new Map();
 
   constructor() {
-    this.seed();
+    // Persist flags to disk so create/update/toggle/delete remain consistent across restarts.
+    // This keeps interview UX smooth while still being "local only" storage.
+    if (!this.loadFromDisk()) {
+      this.seed();
+      this.saveToDisk();
+    }
+  }
+
+  private loadFromDisk(): boolean {
+    try {
+      if (!fs.existsSync(DATA_FILE)) return false;
+      const raw = fs.readFileSync(DATA_FILE, 'utf8');
+      const parsed = JSON.parse(raw) as FeatureFlag[];
+      if (!Array.isArray(parsed)) return false;
+      this.flags = new Map(parsed.map((f) => [f.id, f]));
+      return this.flags.size > 0;
+    } catch {
+      return false;
+    }
+  }
+
+  private saveToDisk() {
+    try {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+      fs.writeFileSync(DATA_FILE, JSON.stringify(Array.from(this.flags.values()), null, 2));
+    } catch {
+      // best-effort persistence; ignore disk failures
+    }
   }
 
   private seed() {
@@ -32,11 +68,10 @@ export class FeatureFlagStore {
       { key: 'notification-center', name: 'Notification Center', environment: 'development', enabled: false, tags: ['ui', 'notifications'] },
     ];
 
-    flagsToSeed.forEach((seed, index) => {
-      // Create a deterministic but unique ID for stable testing if needed, or just random
-      // The spec example used 550e8400-e29b-41d4-a716-446655440001
-      // For now we'll just use random UUIDs
-       const id = uuidv4(); 
+    flagsToSeed.forEach((seed) => {
+      // Use deterministic UUIDs for seeded flags so IDs remain stable across restarts.
+      // This only applies to seed data; created flags remain in-memory and are lost on restart.
+       const id = uuidv5(`${seed.key}:${seed.environment}`, SEED_NAMESPACE);
        
        const flag: FeatureFlag = {
          id,
@@ -70,15 +105,16 @@ export class FeatureFlagStore {
     }
 
     if (filters.tags && filters.tags.length > 0) {
-      result = result.filter(f => filters.tags!.some(t => f.metadata.tags.includes(t)));
+      const tags = filters.tags;
+      result = result.filter((f) => tags.some((t) => f.metadata.tags.includes(t)));
     }
 
     if (filters.search) {
         const search = filters.search.toLowerCase();
-        result = result.filter(f => 
+        result = result.filter((f) => 
             f.key.toLowerCase().includes(search) ||
             f.name.toLowerCase().includes(search) ||
-            (f.description && f.description.toLowerCase().includes(search))
+            (f.description?.toLowerCase().includes(search) ?? false)
         );
     }
 
@@ -156,6 +192,7 @@ export class FeatureFlagStore {
         updatedAt: now,
     };
     this.flags.set(id, newFlag);
+    this.saveToDisk();
     return newFlag;
   }
 
@@ -184,10 +221,13 @@ export class FeatureFlagStore {
     };
     
     this.flags.set(id, updatedFlag);
+    this.saveToDisk();
     return updatedFlag;
   }
 
   delete(id: string): boolean {
-    return this.flags.delete(id);
+    const ok = this.flags.delete(id);
+    if (ok) this.saveToDisk();
+    return ok;
   }
 }

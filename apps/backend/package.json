@@ -1,0 +1,36 @@
+{
+  "name": "interview-backend",
+  "version": "1.0.0",
+  "description": "Mock backend for frontend technical interview",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "keywords": [
+    "fastify",
+    "mock",
+    "api",
+    "feature-flags"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^10.0.0",
+    "@fastify/swagger": "^9.6.1",
+    "@scalar/fastify-api-reference": "^1.1.0",
+    "fastify": "^5.0.0",
+    "fastify-type-provider-zod": "^4.0.0",
+    "uuid": "^9.0.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/uuid": "^9.0.7",
+    "prettier": "^3.1.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

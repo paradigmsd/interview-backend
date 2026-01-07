@@ -12,16 +12,26 @@ This is a pre-built Fastify backend that serves as the API for the frontend tech
 - **Validation:** Zod (with fastify-type-provider-zod)
 - **Documentation:** Scalar (OpenAPI UI)
 
-## Running the Server
+## Running the Apps (Monorepo)
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Server starts at `http://localhost:8080`
+- **Backend API**: `http://localhost:8080` (docs at `/docs`)
+- **Frontend**: Vite dev server (prints its URL in the terminal, usually `http://localhost:5173`)
 
-API Documentation available at `http://localhost:8080/docs`
+### Useful scripts
+
+- `pnpm dev`: run backend + frontend together
+- `pnpm dev:backend`: run only the backend
+- `pnpm dev:frontend`: run only the frontend
+
+### Notes
+
+- The frontend uses a Vite dev proxy so it can call the backend via relative paths like `/flags`.
+- The backend stores data **in memory** (it resets on restart).
 
 ---
 
