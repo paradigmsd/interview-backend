@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { FeatureFlag, Environment, CreateFlagRequest } from '@repo/types';
-import { CreateFlagRequestSchema } from '@repo/types';
+import type { FeatureFlag, Environment, CreateFlagRequest, UpdateFlagRequest } from '@repo/types';
+import { CreateFlagRequestSchema, UpdateFlagRequestSchema } from '@repo/types';
 import { ApiClientError } from '@repo/api-client';
 import { useFlagToggle } from '../hooks/useFlagToggle';
 import { useCreateFlag } from '../hooks/useCreateFlag';
+import { useUpdateFlag } from '../hooks/useUpdateFlag';
+import { useDeleteFlag } from '../hooks/useDeleteFlag';
 import {
   Button,
   Input,
@@ -89,6 +91,216 @@ export function FlagToggle({ flagId, enabled }: FlagToggleProps) {
   );
 }
 
+// DeleteFlagDialog Component
+interface DeleteFlagDialogProps {
+  flag: FeatureFlag;
+}
+
+export function DeleteFlagDialog({ flag }: DeleteFlagDialogProps) {
+  const [open, setOpen] = useState(false);
+  const { mutate: deleteFlag, isPending, error } = useDeleteFlag();
+
+  const handleDelete = () => {
+    deleteFlag(flag.id, {
+      onSuccess: () => {
+        setOpen(false);
+      },
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="destructive" size="sm">
+          Delete
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Delete Feature Flag</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Are you sure you want to delete the flag <strong>{flag.name}</strong> ({flag.key})?
+            This action cannot be undone.
+          </p>
+
+          {error && error instanceof ApiClientError && (
+            <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+              {error.error.message}
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={isPending}>
+              {isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// EditFlagForm Component
+interface EditFlagFormProps {
+  flag: FeatureFlag;
+  onSuccess: () => void;
+  onCancel: () => void;
+}
+
+export function EditFlagForm({ flag, onSuccess, onCancel }: EditFlagFormProps) {
+  const { mutate: updateFlag, isPending, error } = useUpdateFlag();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<UpdateFlagRequest>({
+    resolver: zodResolver(UpdateFlagRequestSchema),
+    defaultValues: {
+      name: flag.name,
+      description: flag.description,
+      enabled: flag.enabled,
+      environment: flag.environment,
+      metadata: {
+        owner: flag.metadata.owner,
+        tags: flag.metadata.tags,
+      },
+    },
+  });
+
+  const environment = watch('environment');
+
+  const onSubmit = (data: UpdateFlagRequest) => {
+    updateFlag(
+      { id: flag.id, data },
+      {
+        onSuccess: () => {
+          onSuccess();
+        },
+      }
+    );
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="edit-key">Key (read-only)</Label>
+        <Input
+          id="edit-key"
+          value={flag.key}
+          disabled
+          className="bg-gray-100"
+        />
+        <p className="text-xs text-gray-500">The key cannot be changed after creation</p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="edit-name">Name *</Label>
+        <Input
+          id="edit-name"
+          placeholder="My Feature Flag"
+          {...register('name')}
+        />
+        {errors.name && (
+          <p className="text-sm text-red-600">{errors.name.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="edit-environment">Environment *</Label>
+        <Select value={environment} onValueChange={(value) => setValue('environment', value as Environment)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select environment" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="development">Development</SelectItem>
+            <SelectItem value="staging">Staging</SelectItem>
+            <SelectItem value="production">Production</SelectItem>
+          </SelectContent>
+        </Select>
+        {errors.environment && (
+          <p className="text-sm text-red-600">{errors.environment.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="edit-description">Description</Label>
+        <Input
+          id="edit-description"
+          placeholder="Optional description"
+          {...register('description')}
+        />
+        {errors.description && (
+          <p className="text-sm text-red-600">{errors.description.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="edit-owner">Owner</Label>
+        <Input
+          id="edit-owner"
+          placeholder="unassigned"
+          {...register('metadata.owner')}
+        />
+        {errors.metadata?.owner && (
+          <p className="text-sm text-red-600">{errors.metadata.owner.message}</p>
+        )}
+      </div>
+
+      {error && error instanceof ApiClientError && (
+        <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+          {error.error.message}
+        </div>
+      )}
+
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? 'Updating...' : 'Update Flag'}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+// EditFlagDialog Component
+interface EditFlagDialogProps {
+  flag: FeatureFlag;
+}
+
+export function EditFlagDialog({ flag }: EditFlagDialogProps) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          Edit
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Edit Feature Flag</DialogTitle>
+        </DialogHeader>
+        <EditFlagForm
+          flag={flag}
+          onSuccess={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // FlagListItem Component
 interface FlagListItemProps {
   flag: FeatureFlag;
@@ -125,8 +337,10 @@ export function FlagListItem({ flag }: FlagListItemProps) {
           </p>
         </div>
 
-        <div className="ml-4">
+        <div className="ml-4 flex items-center gap-2">
           <FlagToggle flagId={flag.id} enabled={flag.enabled} />
+          <EditFlagDialog flag={flag} />
+          <DeleteFlagDialog flag={flag} />
         </div>
       </CardContent>
     </Card>
